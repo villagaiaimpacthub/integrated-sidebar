@@ -1,0 +1,23 @@
+.container {
+  @apply flex h-screen w-full relative;
+}
+
+.affineSidebar {
+  @apply flex-shrink-0 h-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-200 ease-in-out;
+}
+
+.openWebUISidebar {
+  @apply flex-shrink-0 h-full border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-200 ease-in-out;
+}
+
+.mainContent {
+  @apply flex-1 overflow-auto h-full bg-white dark:bg-gray-900;
+}
+
+/* Dark mode support */
+:global(.dark) .affineSidebar,
+:global(.dark) .openWebUISidebar,
+:global(.dark) .mainContent {
+  background: var(--affine-background-primary-dark);
+  border-color: var(--affine-border-color-dark);
+} 
