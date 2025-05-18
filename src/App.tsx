@@ -3,7 +3,7 @@ import UnifiedSidebar, { ToolType } from './components/UnifiedSidebar';
 import LoginPage from './components/LoginPage';
 
 // Updated URLs for Docker environment
-const OPENWEBUI_URL = 'http://localhost:8080'; // Use direct port, not nginx proxy
+const OPENWEBUI_URL = '/openwebui'; // Will be proxied through nginx
 const AFFINE_URL = 'https://3991-212-105-155-5.ngrok-free.app/'; // AFFiNE (remote)
 
 const App: React.FC = () => {
