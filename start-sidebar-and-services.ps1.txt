@@ -1,0 +1,54 @@
+# Helper: Check if a Docker container is running
+function Test-DockerContainerRunning {
+    param($containerName)
+    $container = docker ps --filter "name=$containerName" --format "{{.Names}}"
+    return $container -eq $containerName
+}
+
+# Helper: Check if a process is running on a port
+function Test-PortInUse {
+    param($port)
+    $connection = Test-NetConnection -ComputerName localhost -Port $port -WarningAction SilentlyContinue
+    return $connection.TcpTestSucceeded
+}
+
+Write-Host "Checking required Docker containers..." -ForegroundColor Cyan
+
+# Start OpenWebUI container if not running
+if (-not (Test-DockerContainerRunning "hivealpha-openwebui-1")) {
+    Write-Host "Starting OpenWebUI (docker-compose)..." -ForegroundColor Yellow
+    Set-Location ..
+    docker-compose up -d
+    Set-Location integrated-sidebar-app
+} else {
+    Write-Host "OpenWebUI container is running." -ForegroundColor Green
+}
+
+# Start Nginx container if not running
+if (-not (Test-DockerContainerRunning "hivealpha-nginx-1")) {
+    Write-Host "Starting Nginx (docker-compose)..." -ForegroundColor Yellow
+    Set-Location ..
+    docker-compose up -d
+    Set-Location integrated-sidebar-app
+} else {
+    Write-Host "Nginx container is running." -ForegroundColor Green
+}
+
+# Warn if any other OpenWebUI containers are running
+$otherOpenWebUI = docker ps --filter "name=open-webui" --format "{{.Names}}" | Where-Object { $_ -ne "hivealpha-openwebui-1" }
+if ($otherOpenWebUI) {
+    Write-Host "WARNING: Other OpenWebUI containers running: $otherOpenWebUI" -ForegroundColor Red
+    Write-Host "Consider stopping them to avoid conflicts." -ForegroundColor Red
+}
+
+# Check if Vite is already running (on default port 5173)
+if (Test-PortInUse 5173) {
+    Write-Host "Vite dev server is already running on port 5173." -ForegroundColor Green
+    Write-Host "Open http://localhost:5173 in your browser."
+} else {
+    Write-Host "Starting Vite dev server..." -ForegroundColor Yellow
+    Start-Process powershell -ArgumentList "cd C:\hivealpha\integrated-sidebar-app; npm run dev"
+    Write-Host "Vite dev server started. Open http://localhost:5173 in your browser."
+}
+
+Write-Host "All required services are checked and started if needed." -ForegroundColor Cyan

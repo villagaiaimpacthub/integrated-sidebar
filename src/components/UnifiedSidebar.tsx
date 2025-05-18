@@ -25,6 +25,25 @@ interface UnifiedSidebarProps {
   onLogout: () => void;
 }
 
+const SidebarButton: React.FC<{ 
+  icon: React.ReactNode; 
+  label: string; 
+  dotColor?: string;
+  onClick?: () => void;
+  isActive?: boolean;
+}> = ({ icon, label, dotColor, onClick, isActive }) => (
+  <button 
+    onClick={onClick}
+    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+      isActive ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 text-gray-300 hover:text-white'
+    }`}
+  >
+    {dotColor && <span className={`w-2 h-2 rounded-full ${dotColor}`}></span>}
+    {icon}
+    <span>{label}</span>
+  </button>
+);
+
 const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({ activeTool, onSwitchTool, onLogout }) => {
   const openWebUINavItems = [
     { icon: <HomeIcon className="w-5 h-5" />, label: 'Dashboard', tool: 'openwebui' },
@@ -32,7 +51,6 @@ const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({ activeTool, onSwitchToo
     { icon: <MagnifyingGlassIcon className="w-5 h-5" />, label: 'Search', tool: 'openwebui' }
   ];
 
-  // Affine nav with all features as buttons
   const affineNavItems = [
     { icon: <BookOpenIcon className="w-5 h-5" />, label: 'All docs', tool: 'affine' },
     { icon: <DocumentTextIcon className="w-5 h-5" />, label: 'Journals', tool: 'affine' },
@@ -48,8 +66,6 @@ const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({ activeTool, onSwitchToo
     { icon: <InformationCircleIcon className="w-5 h-5" />, label: 'Learn more', tool: 'affine' },
   ];
 
-  const navItems = activeTool === 'openwebui' ? openWebUINavItems : affineNavItems;
-
   return (
     <aside className="flex flex-col h-full w-64 bg-gray-900 text-white border-r border-gray-800 py-6 px-4 overflow-y-auto">
       <div className="flex justify-center items-center mb-8 gap-2">
@@ -60,27 +76,25 @@ const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({ activeTool, onSwitchToo
         <div className="text-xs uppercase tracking-widest text-gray-400 mb-2">OpenWebUI</div>
         <nav className="flex flex-col gap-2 mb-6">
           {openWebUINavItems.map((item) => (
-            <button
+            <SidebarButton
               key={item.label}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${activeTool === item.tool ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 text-gray-300 hover:text-white'}`}
+              icon={item.icon}
+              label={item.label}
               onClick={() => onSwitchTool(item.tool as ToolType)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
+              isActive={activeTool === item.tool}
+            />
           ))}
         </nav>
         <div className="text-xs uppercase tracking-widest text-gray-400 mb-2">AFFiNE</div>
         <nav className="flex flex-col gap-2 mb-6">
           {affineNavItems.map((item) => (
-            <button
+            <SidebarButton
               key={item.label}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-gray-800 text-gray-300 hover:text-white`}
+              icon={item.icon}
+              label={item.label}
               onClick={() => onSwitchTool('affine')}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
+              isActive={activeTool === 'affine'}
+            />
           ))}
         </nav>
       </div>
@@ -105,13 +119,5 @@ const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({ activeTool, onSwitchToo
     </aside>
   );
 };
-
-const SidebarButton: React.FC<{ icon: React.ReactNode; label: string; dotColor?: string }> = ({ icon, label, dotColor }) => (
-  <button className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white w-full transition-colors">
-    {dotColor && <span className={`w-2 h-2 rounded-full ${dotColor}`}></span>}
-    {icon}
-    <span>{label}</span>
-  </button>
-);
 
 export default UnifiedSidebar; 

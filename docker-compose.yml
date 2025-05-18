@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  sidebar-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      openwebui:
+        condition: service_started
+    networks:
+      - hive-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - ENABLE_OLLAMA_API=true
+      - ENABLE_OPENAI_API=true
+      - WEBUI_AUTH=true
+      - WEBUI_SECRET_KEY=your_secret_key
+      - WEBUI_URL=http://localhost:8080
+    networks:
+      - hive-network
+
+networks:
+  hive-network:
+    driver: bridge
+
+volumes:
+  n8n_data: 

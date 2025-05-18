@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import UnifiedSidebar, { ToolType } from './components/UnifiedSidebar';
 import LoginPage from './components/LoginPage';
 
-const OPENWEBUI_URL = 'http://localhost:3001'; // Open-WebUI via Nginx proxy
+// Updated URLs for Docker environment
+const OPENWEBUI_URL = 'http://localhost:8080'; // Use direct port, not nginx proxy
 const AFFINE_URL = 'https://3991-212-105-155-5.ngrok-free.app/'; // AFFiNE (remote)
 
 const App: React.FC = () => {
